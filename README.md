@@ -89,31 +89,48 @@ muestra los logs de ese contenedor
 
 Explorar el estado de docker:
 
-docker run <contenedor> —> Crear un contenedor
+Crear un contenedor
+`docker run <contenedor>`
 
-docker ps —> Lista los contenedores activos
+Lista los contenedores activos
+`docker ps`
 
-docker ps -a —> Lista todos los contenedores
+Lista todos los contenedores
+`docker ps -a`
 
-docker ps -aq —> Lista solo los IDs de los contenedores
+Lista solo los IDs de los contenedores
+`docker ps -aq`
 
-docker inspect <ID contenedor> —> Inspeccionar un contenedor en específico. Muestra un JSON con toda la metadata del estado del contenedor. También se puede hacer con el nombre del contenedor, ejemplo: docker inspect <nombre contenedor>
+Inspeccionar un contenedor en específico. Muestra un JSON con toda la metadata del estado del contenedor. También se puede hacer con el nombre del contenedor, ejemplo:
 
-docker inspect -f ‘{{ json .Config.Env }}’ <nombre contenedor> —> Filtro para encontrar un dato en especifico.
+`docker inspect <nombre contenedor>`
 
--f —> Para hacer el filtro
-‘{{ json .Config.Env }}’ —> Anotación para pedir algo en particular.
+`docker inspect <ID contenedor>`
+
+Filtro para encontrar un dato en especifico.
+`docker inspect -f ‘{{ json .Config.Env }}’ <nombre contenedor>`
+
+Para hacer el filtro
+`-f`
+Anotación para pedir algo en particular.
+`‘{{ json .Config.Env }}’`
 En este caso en particular me va dar el PATH del contenedor, NO el de mi maquina.
 
-docker rename <nombre contenedor> <nuevo nombre> —> renombrar un contenedor que ya existe.
+renombrar un contenedor que ya existe.
 
-docker run --name <nombre contenedor> <contenedor> —> También puedo asignar un nombre cuando ejecuto run.
+`docker rename <nombre contenedor> <nuevo nombre>`
 
-docker logs <nombre contenedor> —> Me muestra el output del contenedor, incluso si esta apagado. No se ejecuta, muestra el output que quedó registrado.
+También puedo asignar un nombre cuando ejecuto run.
+``docker run --name <nombre contenedor> <contenedor>``
 
-docker rm <nombre-contenedor> —> Borra contenedor
+Me muestra el output del contenedor, incluso si esta apagado. No se ejecuta, muestra el output que quedó registrado
+`docker logs <nombre contenedor>`.
 
-docker rm $(docker ps -aq) —> Borra todos los contenedores
+Borra contenedor
+`docker rm <nombre-contenedor>`
+
+Borra todos los contenedores
+`docker rm $(docker ps -aq)`
 
 listar archivos en ubuntu todos `-a` los archivos,`-l` en lista , ordenados por modificacion `-c`
 
