@@ -120,8 +120,14 @@ renombrar un contenedor que ya existe.
 
 `docker rename <nombre contenedor> <nuevo nombre>`
 
-También puedo asignar un nombre cuando ejecuto run.
-``docker run --name <nombre contenedor> <contenedor>``
+Asignar nombre a un contenedor
+``docker run --name <nombre contenedor> <contenedor a ejecutar>``
+
+ejemplo:
+
+```shell
+docker run --name db mongo
+```
 
 Me muestra el output del contenedor, incluso si esta apagado. No se ejecuta, muestra el output que quedó registrado
 `docker logs <nombre contenedor>`.
@@ -131,6 +137,9 @@ Borra contenedor
 
 Borra todos los contenedores
 `docker rm $(docker ps -aq)`
+
+Detener contenedor
+`docker stop <nombre-contenedor>`
 
 listar archivos en ubuntu todos `-a` los archivos,`-l` en lista , ordenados por modificacion `-c`
 
@@ -192,6 +201,8 @@ ejemplo:
 docker exec -it name bash
 ```
 
+`-i` es interactiva la terminal
+
 *Notas* docker SIEMPRE le asigna PID 1 al comando que inicializa el contenedor, cuando ese comando haga `exit` el contenedor se apagara
 
 Opciones para Apagar el contenedor:
@@ -206,6 +217,12 @@ Eliminando el contenedor
 
 ```shell
 docker rm -f nombre_del_contenedor
+```
+
+deteniendo el contenedor
+
+```shell
+docker stop nombre_del_contenedor
 ```
 
 ### APP Armours y docker bug en ubuntu
@@ -224,3 +241,55 @@ sudo aa-remove-unknown
 ```
 
 este comando remueve los perfiles desconocidos de app armour, y docker al instalarse instala docker por defecto el perfil de app armour 'docker-default' que causa este problema de falta de permisos.
+
+### Exponiendo contenedores
+
+detach
+
+```shell
+docker run -d
+```
+
+para que el proceso no acapare la consola al ejecutarse
+
+corriendo un server ngnix
+con nombre server
+
+```shell
+docker run -d --name server nginx
+```
+
+hacerle publish al puerto que usa nginx,
+mi puerto 8080 sera usado como el 80 del contenedor
+
+```shell
+docker run -d --name server -p 8080:80 nginx
+```
+
+de esta forma en el puerto 8080 de mi computadora se expone el puerto 80 del contenedor
+
+en mi maquina solo se puede asignar un puerto que no tenga ya un proceso asignado.
+
+### Datos en docker
+
+dandole acceso al contenedor a mi sistema de archivos (una carpeta) para que este alamcene informacion alli
+
+asignandole un volumen a docker declaro la ruta de una carpeta en mi computadora y a que carpeta del contenedor quiero que pertenezca.
+
+usando la flag `-v` declaro este volumen
+
+```shell
+docker run --name db -d -v /home/user/docker/platzi_docker_course/mongodata:/data/db mongo
+```
+
+de esta forma podemos mantener datos como la tablas de una base de datos de forma constante aunque el contenedor se elimine.
+
+de esta forma
+
+```shell
+docker exec -it db bash
+```
+
+y `mongo`, la data de la base de datos es constante
+
+**ATENCION** es peligroso usar los volumenes de esta forma ya que todos los cambios en la carpeta hechos por otro proceso, se reflejan en la carpeta desde el punto de vista del contenedor ya que son la misma carpeta
