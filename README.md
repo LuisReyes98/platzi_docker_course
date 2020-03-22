@@ -90,7 +90,7 @@ muestra los logs de ese contenedor
 Explorar el estado de docker:
 
 Crear un contenedor
-`docker run <contenedor>`
+`docker run <imagen>`
 
 Lista los contenedores activos
 `docker ps`
@@ -121,7 +121,7 @@ renombrar un contenedor que ya existe.
 `docker rename <nombre contenedor> <nuevo nombre>`
 
 Asignar nombre a un contenedor
-``docker run --name <nombre contenedor> <contenedor a ejecutar>``
+``docker run --name <nombre contenedor> <imagen a ejecutar>``
 
 ejemplo:
 
@@ -293,3 +293,85 @@ docker exec -it db bash
 y `mongo`, la data de la base de datos es constante
 
 **ATENCION** es peligroso usar los volumenes de esta forma ya que todos los cambios en la carpeta hechos por otro proceso, se reflejan en la carpeta desde el punto de vista del contenedor ya que son la misma carpeta
+
+### Volumenes de docker
+
+al ejecutar un contenedor docker le crea un volumen para su ejecucion
+
+ver el listado de los volumenes
+
+```shell
+docker volume ls
+```
+
+eliminar todos los volumenes de docker
+
+```shell
+docker volume prune
+```
+
+crear un volumen para mis datos
+
+```shell
+docker volume create $nombre
+```
+
+montar un volumen en el contenedor
+
+```shell
+docker run --mount src=$nombre_volumen,dst=$directorio_dentro_del_contenedor $imagen_a_correr
+```
+
+ejemplo:
+
+donde se corre un contenedor de mongo y se especifica que los datos de la base de datos se guardaran en el contenedor
+
+```shell
+docker run -d --nd --name db --mount src=dbdata,dst=/data/db mongo
+```
+
+al usar volumenes se logra persistir data entre contenedores de manera mucho mas segura que usando un directorio del sistema, ademas de que docker permite usar multiples herramientas como almacenamiento en la nube.
+
+### Imagenes
+
+son plantillas de lo que se quiere correr
+
+descargar solo la imagen sin ejecutarla
+
+```sh
+docker pull $nombre_de_la_imagen
+```
+
+una imagen no es un archivo ni una cosa, es un conjunto de capas layers
+
+cada capa de una imagen representa una diferencia con la anterior, similar a como en git cada commit representa es una diferencia con el estado anterior de los archivos
+
+listar las imagenes
+
+```sh
+docker image ls
+```
+
+el nombre de la imagen es el **REPOSITORY** de la imagen
+
+las imagenes existentes para acceso publico se pueden ver en el [Docker Hub](https://hub.docker.com/)
+
+al descargar una imagen se le puede especificar una version o por defecto descarga la ultima
+
+para descargar una version explicita de una imagen solo hay que definirla con dos puntos
+
+```sh
+docker pull $repositorio:$version
+```
+
+ejemplo
+
+```sh
+docker pull ubuntu:18.04
+```
+
+las imagenes son eficientes es decir si una imagen usa el mismo contenido que otra, ese contenido solo existe una vez.
+
+permitiendo que al descargar dos veces la misma imagen esta no existe dos veces en el disco y que imagenes similares solo descarguen las diferencias.
+
+### Creando imagenes
