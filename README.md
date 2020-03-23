@@ -375,3 +375,60 @@ las imagenes son eficientes es decir si una imagen usa el mismo contenido que ot
 permitiendo que al descargar dos veces la misma imagen esta no existe dos veces en el disco y que imagenes similares solo descarguen las diferencias.
 
 ### Creando imagenes
+
+las imagenes se crean a partir de archivos `Dockerfile`
+
+al crear la imagen se le da el nombre de la imagen y el path del archivo que especifica el build, el build debe hacerse en una carpeta vacia para empezar donde docker tendra acceso a todos los contenidos que alla en esa carpeta
+
+```sh
+docker build -t $repostiorio_base:$version_que_crearemos $path_al_archivo_Dockerfile
+```
+
+cambiarle el tag a una imagen
+
+```sh
+docker tag $tag_vieja $tag_nueva
+```
+
+cambiarle el nombre a una version de un repostiorio
+
+```sh
+docker tag $repostiorio:$version $nuevo_repositorio:$nueva_version
+```
+
+hacer push de una imagen a docker hub
+
+```sh
+docker push $nombre_del_repository:$version
+```
+
+ejemplo
+
+```sh
+docker tag ubuntu:platzi luisreyes64/ubuntu:platzi
+```
+
+al hacer push docker no reenvia los layers que obtuvieste de docker hub
+
+### Analisando imagenes
+
+ver los comando ejecutados en una imagen cuando se hizo build
+
+```sh
+docker history $nombre_de_la_imagen
+```
+
+ver el output completo
+
+```sh
+docker history --no-trunc $nombre_de_la_imagen
+```
+
+#### Dive
+
+herramienta de tercero para realizar analisis de imagenes [Dive](https://github.com/wagoodman/dive)
+
+```sh
+dive $nombre_imagen
+```
+
