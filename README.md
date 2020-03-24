@@ -410,6 +410,12 @@ docker tag ubuntu:platzi luisreyes64/ubuntu:platzi
 
 al hacer push docker no reenvia los layers que obtuvieste de docker hub
 
+Construir imagenes custom con **Dockerfile**
+
+```sh
+docker build -t $tag_de_la_imagen $path_al_Dockerfile
+```
+
 ### Analisando imagenes
 
 ver los comando ejecutados en una imagen cuando se hizo build
@@ -432,3 +438,24 @@ herramienta de tercero para realizar analisis de imagenes [Dive](https://github.
 dive $nombre_imagen
 ```
 
+### Comandos de dockerfile
+
+`COPY` en el Dockerfile copia las cosas de un directorio a un directorio del contenedor en el contexto de build
+
+ejemplo
+
+copia todo de la carpeta actual a la carpeta de src, que es un path comun donde poner datos de aplicacion de usuario
+
+```Dockerfile
+COPY [".", "/usr/src/"]
+```
+
+`WORKDIR` hace que los siguientes comandos se ejecuten en el directorio especificado
+
+### Ejecutar el contenedor para desarrollo
+
+para lograr ejecutar la app sin necesidad de reconstruir los contenedores cada vez que haya un cambio se debe pasar un servicio de monitoreo de archivos que reinicie el servidor cada vez que haya los cambios un ejemplo de esto es nodemon, ademas de eso se debe montar la carpeta que contiene el proyecto en desarrollo como un volumen en el contenedor
+
+```sh
+docker run --rm --name nodeapp -p 3000:3000 -v /home/luis/Documents/courses/docker/docker:/usr/src platziapp
+```
