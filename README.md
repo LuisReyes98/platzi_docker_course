@@ -459,3 +459,41 @@ para lograr ejecutar la app sin necesidad de reconstruir los contenedores cada v
 ```sh
 docker run --rm --name nodeapp -p 3000:3000 -v /home/luis/Documents/courses/docker/docker:/usr/src platziapp
 ```
+
+### Realizar conexiones entre contenedores
+
+Ya que los contenedores se comportan como maquinas virtuales para realizar una conexion entre ellos se debe hacer a traves de una red.
+
+ver las redes disponibles de docker
+
+```sh
+docker network ls
+```
+
+creando una network a la cual otros contenedores se podran conectar despues
+
+```sh
+docker network create --attachable $nombre_de_la_red
+```
+
+una vez un contenedor este creado y corriendo este puede ser conectado a una red de docker
+
+conectando un contenedor a una network de docker
+
+```sh
+docker network connect $network_name $container_name
+```
+
+inspeccionar una red de docker
+
+```sh
+docker network inspect $network_name
+```
+
+cuando diversos contenedores estan conectados a una misma docker network esto pueden acceder a la direccion de red de los otros contendores usando el nombre del contenedor
+
+Ejemplo de correr el contendor con un puerto y varibales de entorno
+
+```sh
+docker run -d --name app -p 3000:3000 --env MONGO_URL=mongodb://db:27017/test platziapp
+```
