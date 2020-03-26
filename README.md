@@ -497,3 +497,15 @@ Ejemplo de correr el contendor con un puerto y varibales de entorno
 ```sh
 docker run -d --name app -p 3000:3000 --env MONGO_URL=mongodb://db:27017/test platziapp
 ```
+
+### Docker compose
+
+Construccion de entornos de aplicacion de forma estable
+
+#### Versiones
+
+es importante declarar la version de docker compose, ya que entre las versiones 2 y 3 la sintaxis es la misma pero las features son muy diferentes.
+
+#### Servicios
+
+en docker compose se habla de servicios y no de contenedores, ademas cada servicio puede tener mas de un contenedor
