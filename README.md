@@ -508,4 +508,70 @@ es importante declarar la version de docker compose, ya que entre las versiones 
 
 #### Servicios
 
-en docker compose se habla de servicios y no de contenedores, ademas cada servicio puede tener mas de un contenedor
+en docker compose se habla de servicios y no de contenedores, ademas cada servicio puede tener mas de un contenedor.
+
+Nombre de los contenedores
+
+por defecto si no se le define el nombre de los contendores de la siguiente forma
+
+**<nombre carpeta del contenedor>_<nombre del servicio>**
+
+#### Comandos
+
+levantar todos los contenedores
+
+```sh
+docker-compose up
+```
+
+ejecutar docker compose sin output
+
+```sh
+docker-compose up -d
+```
+
+dar de baja los contenedores
+
+```sh
+docker-compose down
+```
+
+listar contenedores que se estan ejecutando con docker compose
+
+```sh
+docker-compose ps
+```
+
+##### Logs
+
+ver los logs de un servicio
+
+```sh
+docker-compose logs $nombre_servicio
+```
+
+hacer follow de los logs
+
+```sh
+docker-compose logs -f $nombre_servicio
+```
+
+##### Ejecutar comando en contenedor de un servicio
+
+```sh
+docker-compose exec $nombre_servicio $comando
+```
+
+ejemplo abriendo el sistema de consola:
+
+```sh
+docker-compose exec app bash
+```
+
+##### Escalar el servicio
+
+escalar un servicio para que use multiples contenedores
+
+```sh
+docker-compose scale $nombre_servicio=$numero_de_contenedores
+```
