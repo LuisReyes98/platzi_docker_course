@@ -575,3 +575,5 @@ escalar un servicio para que use multiples contenedores
 ```sh
 docker-compose scale $nombre_servicio=$numero_de_contenedores
 ```
+
+de esta forma es facil simular un servicio de multiples servidores, escalable y de gran escala
