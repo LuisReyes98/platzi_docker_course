@@ -381,7 +381,7 @@ las imagenes se crean a partir de archivos `Dockerfile`
 al crear la imagen se le da el nombre de la imagen y el path del archivo que especifica el build, el build debe hacerse en una carpeta vacia para empezar donde docker tendra acceso a todos los contenidos que alla en esa carpeta
 
 ```sh
-docker build -t $repostiorio_base:$version_que_crearemos $path_al_archivo_Dockerfile
+docker build -t $repositiorio_base:$version_que_crearemos $path_al_archivo_Dockerfile
 ```
 
 cambiarle el tag a una imagen
@@ -413,7 +413,19 @@ al hacer push docker no reenvia los layers que obtuvieste de docker hub
 Construir imagenes custom con **Dockerfile**
 
 ```sh
-docker build -t $tag_de_la_imagen $path_al_Dockerfile
+docker build -t $tag_de_la_imagen $path_al_contexto
+```
+
+hacer build con un dockerfile que no es en la misma carpeta
+
+```sh
+docker build -t $tag_imagen -f $path_dockerfile $path_contexto
+```
+
+ejemplo:
+
+```sh
+docker build -t platziapp -f build/development.Dockerfile .
 ```
 
 ### Analisando imagenes
@@ -514,7 +526,9 @@ Nombre de los contenedores
 
 por defecto si no se le define el nombre de los contendores de la siguiente forma
 
-**<nombre carpeta del contenedor>_<nombre del servicio>**
+```javascript
+`${nombre_carpeta_del_contenedor}_${nombre_del_servicio}`
+```
 
 #### Comandos
 
@@ -577,3 +591,77 @@ docker-compose scale $nombre_servicio=$numero_de_contenedores
 ```
 
 de esta forma es facil simular un servicio de multiples servidores, escalable y de gran escala
+
+### Conceptos de imagenes productivas
+
+Permitir que archivos y carpetas no formen parte de la imagen final
+
+El use de  `.dockerignore` permite ignorar archivos y carpetas en el contexto de build
+
+Realizar tests en la app en el build
+los docker file pueden utilizarse para generar multiples contextos y ejecutar acciones en estos contextos y que el output de files de estos contextos no quede en la imagen productiva.
+
+Ejemplo de Dockerfile donde se ejecutan tests y no se guardan los archivos generados por ellos ni los archivos innecesarios
+
+```Dockerfile
+FROM node:10 as builder
+
+COPY ["package.json", "package-lock.json", "/usr/src/"]
+
+WORKDIR /usr/src
+
+RUN npm install --only=production
+
+COPY [".", "/usr/src/"]
+
+RUN npm install --only=development
+
+RUN npm run test
+
+
+# Productive image
+FROM node:10
+
+COPY ["package.json", "package-lock.json", "/usr/src/"]
+
+WORKDIR /usr/src
+
+RUN npm install --only=production
+
+# aqui solo trae los archivos de produccion
+# ademas el path es dentro del contenedor que llamamos builder
+COPY --from=builder ["/usr/src/index.js", "/usr/src/"]
+
+EXPOSE 3000
+
+CMD ["node", "index.js"]
+```
+
+### Manejar docker desde un contenedor
+
+Por los problemas de codigo nativo que soluciona docker sigue habiendo un programa que se debe ejecutar en la maquina este es el mismisimo **Docker**.
+
+Y como solucionar este ultimo problema de natividad, esto se puede solventar al utilizar Docker para correr una imagen de Docker.
+
+#### Docker en Docker
+
+Ejecutando docker en contenedor que a su vez se comunica con el docker daemon de la computadora en que se ejecuta
+
+```sh
+docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock docker:19.03.8
+```
+
+de esta forma puedes hacer build de las imagenes de build dentro del contenedor de docker y probar las imagenes desde alli y luego subir la imagenes a un servidor que corra docker
+
+este metodo se suele usar mucho en entornos de integracion continua como Jenkins
+
+#### Ejecutando
+
+ejecutando dive con docker dentro de docker para analizar la imagen platziapp
+
+```sh
+docker run --rm -it \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v $(which docker):/bin/docker \
+wagoodman/dive:latest platziapp
+```
